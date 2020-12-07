@@ -93,5 +93,28 @@ class TodoListTableViewController: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
-
+    
+    //MARK - TableView Delegate Methods
+    
+    /*
+        Actions performed when row is selected
+     */
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        
+        /*
+            Conditional checkmark when user selects a cell
+         */
+        if ( tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark ) {
+            // Remove checkmark accessory
+            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+        }
+        else {
+            // Add checkmark accessory
+            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+        }
+        
+        // Unhighlight row after it is selected
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
