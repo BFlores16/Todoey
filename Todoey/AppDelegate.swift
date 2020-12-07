@@ -53,6 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Core Data stack
 
+    // lazy means the variable is only loaded once the variable is called
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -60,7 +61,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          application to it. This property is optional since there are legitimate
          error conditions that could cause the creation of the store to fail.
         */
+        
+        // Create container for storage
         let container = NSPersistentContainer(name: "Todoey")
+        
+        // Load the contatiner and get it ready for use
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.

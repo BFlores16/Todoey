@@ -16,15 +16,15 @@ class TodoListTableViewController: UITableViewController {
     let defaults = UserDefaults.standard
     
     // Creating a new user data location instead of NSUserDefault
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    //let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
-    // Get App delegate object context
+    // Goes into app delegate and grabs persistent container context
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //loadItems()
+        loadItems()
 
         // Load the data from NSUserDefault
 //        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
@@ -160,6 +160,16 @@ class TodoListTableViewController: UITableViewController {
         
         tableView.reloadData()
         
+    }
+    
+    func loadItems() {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+           itemArray = try context.fetch(request)
+        }
+        catch {
+            print("Error saving context \(error)")
+        }
     }
     
     /*
