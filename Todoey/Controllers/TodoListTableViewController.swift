@@ -22,11 +22,11 @@ class TodoListTableViewController: UITableViewController {
         itemArray.append(newItem)
         
         let newItem2 = Item()
-        newItem.title = "Save the world"
+        newItem2.title = "Save the world"
         itemArray.append(newItem2)
         
         let newItem3 = Item()
-        newItem.title = "Find Mike"
+        newItem3.title = "Find Mike"
         itemArray.append(newItem3)
 
         // Load the data from NSUserData
@@ -46,15 +46,14 @@ class TodoListTableViewController: UITableViewController {
     /*
         Return the number of sections in the table view. Return 1 or comment out function for no sections.
      */
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    /*override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
-    }
+    }*/
 
     /*
         Return the number of items in the table view.
      */
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return itemArray.count
     }
     
@@ -62,11 +61,14 @@ class TodoListTableViewController: UITableViewController {
         Provide the cells for the table view. Displayed as a row.
      */
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        cell.textLabel?.text = itemArray[indexPath.row].title
+        let item = itemArray[indexPath.row]
         
-        if ( itemArray[indexPath.row].done ) {
+        cell.textLabel?.text = item.title
+        
+        if ( item.done ) {
             // Add checkmark accessory
             cell.accessoryType = .checkmark
         }
@@ -74,9 +76,6 @@ class TodoListTableViewController: UITableViewController {
             // Remove checkmark accessory
             cell.accessoryType = .none
         }
-        
-        // Reload the table view to call its data source methods so that it will update to user
-        tableView.reloadData()
         
         return cell
     }
@@ -135,13 +134,12 @@ class TodoListTableViewController: UITableViewController {
         
         /*
             Conditional checkmark when user selects a cell
+            Changes the bool condition from false to true or true to false
          */
-        if itemArray[indexPath.row].done {
-            itemArray[indexPath.row].done = false
-        }
-        else {
-            itemArray[indexPath.row].done = true
-        }
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        
+        // Reload the table view to call its data source methods so that it will update to user
+        tableView.reloadData()
         
         // Unhighlight row after it is selected
         tableView.deselectRow(at: indexPath, animated: true)
