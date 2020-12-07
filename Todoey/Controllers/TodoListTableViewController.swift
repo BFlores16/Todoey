@@ -9,7 +9,7 @@ import UIKit
 
 class TodoListTableViewController: UITableViewController {
     
-    let itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,4 +117,55 @@ class TodoListTableViewController: UITableViewController {
         // Unhighlight row after it is selected
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    //MARK - Add new items
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        
+        // Local variable used to refer to alert text field in any scope
+        var textField = UITextField()
+        
+        // Create the alert
+        let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+        
+        // Create a cancel button for the alert
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) {
+            (action) in
+            // Possible to do this but unecessary because the style handles it
+            //self.dismiss(animated: true, completion: nil)
+        }
+        
+        // Create an add button for the alert
+        let addAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            // Action once user clicks "Add Item"
+            
+            // This gets triggered after alert.addTextField closure
+            print("Second: \(textField.text ?? "")")
+            
+            self.itemArray.append(textField.text!)
+            
+            // Table view will not update without this
+            self.tableView.reloadData()
+        }
+        
+        /*
+            Remember, that in this closure, actions do not happen until after the text field is added to the alert, which does not happen until the "action" completion block completes.
+            Be mindful of asynchrounous calls
+         */
+        alert.addTextField { (alertTextField) in
+            // This is a local variable, we need to assign it to another variable to be able to access outside this scope
+            alertTextField.placeholder = "Create new item."
+            textField = alertTextField
+            
+            // Remember that this line will print empty because the addTextField closure completes before the "action" closure
+            print("First: \(textField.text ?? "")")
+        }
+        
+        // Order of adding will determine order in alert.
+        alert.addAction(cancelAction)
+        alert.addAction(addAction)
+        
+        present(alert, animated: true, completion: nil)
+
+    }
+    
 }
