@@ -9,18 +9,31 @@ import UIKit
 
 class TodoListTableViewController: UITableViewController {
     
-    var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    var itemArray = [Item]()
     
-    // Used for NSUserData persistent storage
+    // Used for NSUserDefault persistent storage
     let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let newItem = Item()
+        newItem.title = "Find Mike"
+        itemArray.append(newItem)
+        
+        let newItem2 = Item()
+        newItem.title = "Save the world"
+        itemArray.append(newItem2)
+        
+        let newItem3 = Item()
+        newItem.title = "Find Mike"
+        itemArray.append(newItem3)
 
         // Load the data from NSUserData
-        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
-            itemArray = items
-        }
+        //if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
+        //    itemArray = items
+        //}
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -51,7 +64,19 @@ class TodoListTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        cell.textLabel?.text = itemArray[indexPath.row]
+        cell.textLabel?.text = itemArray[indexPath.row].title
+        
+        if ( itemArray[indexPath.row].done ) {
+            // Add checkmark accessory
+            cell.accessoryType = .checkmark
+        }
+        else {
+            // Remove checkmark accessory
+            cell.accessoryType = .none
+        }
+        
+        // Reload the table view to call its data source methods so that it will update to user
+        tableView.reloadData()
         
         return cell
     }
@@ -108,17 +133,14 @@ class TodoListTableViewController: UITableViewController {
      */
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        
         /*
             Conditional checkmark when user selects a cell
          */
-        if ( tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark ) {
-            // Remove checkmark accessory
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+        if itemArray[indexPath.row].done {
+            itemArray[indexPath.row].done = false
         }
         else {
-            // Add checkmark accessory
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+            itemArray[indexPath.row].done = true
         }
         
         // Unhighlight row after it is selected
@@ -148,7 +170,9 @@ class TodoListTableViewController: UITableViewController {
             // This gets triggered after alert.addTextField closure
             print("Second: \(textField.text ?? "")")
             
-            self.itemArray.append(textField.text!)
+            let newItem = Item()
+            newItem.title = textField.text!
+            self.itemArray.append(newItem)
             
             // Store the data in NSUserData
             self.defaults.set(self.itemArray, forKey: "TodoListArray")
