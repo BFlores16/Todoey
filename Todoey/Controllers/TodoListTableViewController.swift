@@ -10,10 +10,17 @@ import UIKit
 class TodoListTableViewController: UITableViewController {
     
     var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    
+    // Used for NSUserData persistent storage
+    let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Load the data from NSUserData
+        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
+            itemArray = items
+        }
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -142,6 +149,9 @@ class TodoListTableViewController: UITableViewController {
             print("Second: \(textField.text ?? "")")
             
             self.itemArray.append(textField.text!)
+            
+            // Store the data in NSUserData
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
             
             // Table view will not update without this
             self.tableView.reloadData()

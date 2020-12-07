@@ -11,11 +11,31 @@ import CoreData
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
+    /*
+        First function that is generated when app starts, even before viewDidLoad
+     */
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        //print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
+        
         return true
+    }
+    
+    func applicationWillResignActive(_ application: UIApplication) {
+        print("application will save data")
+    }
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        print("application did enter background")
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        // Restart any tasks that were paused (or not yet started) while the application wa sinactive. If the application was previously in the background, optionally refresh theuser interface.
+        print("application did restart tasks")
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        print("application will terminate")
     }
 
     // MARK: UISceneSession Lifecycle
