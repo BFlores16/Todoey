@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListTableViewController: UITableViewController {
     
@@ -16,11 +17,14 @@ class TodoListTableViewController: UITableViewController {
     
     // Creating a new user data location instead of NSUserDefault
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    
+    // Get App delegate object context
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        loadItems()
+        //loadItems()
 
         // Load the data from NSUserDefault
 //        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
@@ -107,11 +111,12 @@ class TodoListTableViewController: UITableViewController {
             // This gets triggered after alert.addTextField closure
             print("Second: \(textField.text ?? "")")
             
-            let newItem = Item()
+            let newItem = Item(context: self.context)
             newItem.title = textField.text!
+            newItem.done = false
             self.itemArray.append(newItem)
-        
             
+            // Save item to Core Data
             self.saveItems()
         }
         
@@ -142,14 +147,15 @@ class TodoListTableViewController: UITableViewController {
      */
     func saveItems() {
         
-        let encoder = PropertyListEncoder()
+        //let encoder = PropertyListEncoder()
         
         do {
-            let data = try encoder.encode(self.itemArray)
-            try data.write(to: dataFilePath!)
+            try context.save()
+            //let data = try encoder.encode(self.itemArray)
+            //try data.write(to: dataFilePath!)
         }
         catch {
-            print("Error encoding item array, \(error)")
+            print("Error saving context, \(error)")
         }
         
         tableView.reloadData()
@@ -159,7 +165,7 @@ class TodoListTableViewController: UITableViewController {
     /*
         Use NSCoder to decode data from plist file and update to item array
      */
-    func loadItems() {
+    /*func loadItems() {
         if let data = try? Data(contentsOf: dataFilePath!) {
             let decoder = PropertyListDecoder()
             do {
@@ -170,6 +176,6 @@ class TodoListTableViewController: UITableViewController {
             print("Error decoding item array, \(error)")
             }
         }
-    }
+    }*/
     
 }
