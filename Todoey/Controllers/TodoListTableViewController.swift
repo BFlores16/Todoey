@@ -13,32 +13,20 @@ class TodoListTableViewController: UITableViewController {
     
     // Used for NSUserDefault persistent storage
     let defaults = UserDefaults.standard
+    
+    // Creating a new user data location instead of NSUserDefault
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let newItem = Item()
-        newItem.title = "Find Mike"
-        itemArray.append(newItem)
-        
-        let newItem2 = Item()
-        newItem2.title = "Save the world"
-        itemArray.append(newItem2)
-        
-        let newItem3 = Item()
-        newItem3.title = "Find Mike"
-        itemArray.append(newItem3)
+        loadItems()
 
-        // Load the data from NSUserData
-        //if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
-        //    itemArray = items
-        //}
+        // Load the data from NSUserDefault
+//        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
+//            itemArray = items
+//        }
         
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
     // MARK: - Table view data source
@@ -68,62 +56,14 @@ class TodoListTableViewController: UITableViewController {
         
         cell.textLabel?.text = item.title
         
-        if ( item.done ) {
-            // Add checkmark accessory
-            cell.accessoryType = .checkmark
-        }
-        else {
-            // Remove checkmark accessory
-            cell.accessoryType = .none
-        }
+        // Ternary operator ==>
+        // value = condition ? valueIfTrue : ValueIfFalse
+        // Set the cell accessory depending on whether the cell is in
+        // done or not done condition
+        cell.accessoryType = item.done == true ? .checkmark : .none
         
         return cell
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
     //MARK - TableView Delegate Methods
     
@@ -138,8 +78,7 @@ class TodoListTableViewController: UITableViewController {
          */
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
-        // Reload the table view to call its data source methods so that it will update to user
-        tableView.reloadData()
+        saveItems()
         
         // Unhighlight row after it is selected
         tableView.deselectRow(at: indexPath, animated: true)
@@ -171,12 +110,9 @@ class TodoListTableViewController: UITableViewController {
             let newItem = Item()
             newItem.title = textField.text!
             self.itemArray.append(newItem)
+        
             
-            // Store the data in NSUserData
-            self.defaults.set(self.itemArray, forKey: "TodoListArray")
-            
-            // Table view will not update without this
-            self.tableView.reloadData()
+            self.saveItems()
         }
         
         /*
@@ -198,6 +134,42 @@ class TodoListTableViewController: UITableViewController {
         
         present(alert, animated: true, completion: nil)
 
+    }
+    
+    //MARK - Model Manipulation Methods
+    /*
+        Use NSCoder to encode item array data into plist file to retrieve from later
+     */
+    func saveItems() {
+        
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(self.itemArray)
+            try data.write(to: dataFilePath!)
+        }
+        catch {
+            print("Error encoding item array, \(error)")
+        }
+        
+        tableView.reloadData()
+        
+    }
+    
+    /*
+        Use NSCoder to decode data from plist file and update to item array
+     */
+    func loadItems() {
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            }
+            catch
+            {
+            print("Error decoding item array, \(error)")
+            }
+        }
     }
     
 }
