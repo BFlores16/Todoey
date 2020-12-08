@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import RealmSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,6 +16,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         First function that is generated when app starts, even before viewDidLoad
      */
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        //print(Realm.Configuration.defaultConfiguration.fileURL)
+        
+        let data = Data()
+        data.name = "Brando"
+        data.age = 24
+        
+        do {
+            let realm = try Realm()
+            try realm.write {
+                realm.add(data)
+            }
+        }
+        catch {
+            print("Error initializing Realm, \(error)")
+        }
         
         return true
     }
