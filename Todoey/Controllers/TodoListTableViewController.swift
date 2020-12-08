@@ -12,6 +12,8 @@ class TodoListTableViewController: UITableViewController {
     
     var itemArray = [Item]()
     
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     // Used for NSUserDefault persistent storage
     let defaults = UserDefaults.standard
     
@@ -23,6 +25,8 @@ class TodoListTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        searchBar.delegate = self
         
         loadItems()
 
@@ -141,11 +145,30 @@ class TodoListTableViewController: UITableViewController {
 
     }
     
+    
+    
     //MARK - Model Manipulation Methods
+    
+    /*
+        Write data to Context and write to Core Data
+     */
+    func saveItems() {
+        
+        do {
+            try context.save()
+        }
+        catch {
+            print("Error saving context, \(error)")
+        }
+        
+        tableView.reloadData()
+        
+    }
+    
     /*
         Use NSCoder to encode item array data into plist file to retrieve from later
      */
-    func saveItems() {
+    /*func saveItems() {
         
         //let encoder = PropertyListEncoder()
         
@@ -160,16 +183,22 @@ class TodoListTableViewController: UITableViewController {
         
         tableView.reloadData()
         
-    }
+    }*/
     
-    func loadItems() {
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
+    /*
+        Get data from Core Data and reload the table view
+     */
+    // Function input allows a default value of Item.fetchRequest()
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+
         do {
            itemArray = try context.fetch(request)
         }
         catch {
             print("Error saving context \(error)")
         }
+        
+        tableView.reloadData()
     }
     
     /*
@@ -187,5 +216,39 @@ class TodoListTableViewController: UITableViewController {
             }
         }
     }*/
+    
+}
+
+//MARK - SearchBar delegate functions
+extension TodoListTableViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        
+        // Foundation class that specifies how data should be fetched
+        // Realm website contains sheet cheat for different NSPredicates
+        request.predicate = NSPredicate(format: "title CONTAINS %@", searchBar.text!)
+        
+        
+        // Sorts results based on alphabetical order
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+
+        
+        loadItems(with: request)
+        
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchBar.text?.count == 0 {
+            loadItems()
+            
+            
+            DispatchQueue.main.async {
+                // Dismiss keyboard and close active search bar
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
     
 }
