@@ -34,23 +34,10 @@ class TodoListTableViewController: UITableViewController {
         // Change back button to white
         self.navigationController?.navigationBar.tintColor = UIColor.white
         
-        //searchBar.delegate = self
-
-        // Load the data from NSUserDefault
-//        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
-//            itemArray = items
-//        }
-        
+        searchBar.delegate = self
     }
 
     // MARK: - Table view data source
-
-    /*
-        Return the number of sections in the table view. Return 1 or comment out function for no sections.
-     */
-    /*override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }*/
 
     /*
         Return the number of items in the table view.
@@ -137,6 +124,7 @@ class TodoListTableViewController: UITableViewController {
                     try self.realm.write {
                         let newItem = Item()
                         newItem.title = textField.text!
+                        newItem.dateCreated = Date()
                         currentCategory.items.append(newItem)
                     }
                 }
@@ -186,34 +174,24 @@ class TodoListTableViewController: UITableViewController {
 }
 
 //MARK: - SearchBar delegate functions
-/*extension TodoListTableViewController: UISearchBarDelegate {
+extension TodoListTableViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
         
-        // Foundation class that specifies how data should be fetched
-        // Realm website contains sheet cheat for different NSPredicates
-        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        toDoItems = toDoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
         
-        
-        // Sorts results based on alphabetical order
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-
-        
-        loadItems(with: request, with: predicate)
-        
+        tableView.reloadData()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         if searchBar.text?.count == 0 {
             loadItems()
-            
-            
+        
             DispatchQueue.main.async {
                 // Dismiss keyboard and close active search bar
                 searchBar.resignFirstResponder()
             }
         }
     }
-}*/
+}
