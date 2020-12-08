@@ -73,7 +73,7 @@ class TodoListTableViewController: UITableViewController {
         return cell
     }
     
-    //MARK - TableView Delegate Methods
+    //MARK: - TableView Delegate Methods
     
     /*
         Actions performed when row is selected
@@ -92,7 +92,7 @@ class TodoListTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    //MARK - Add new items
+    //MARK: - Add new items
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
         // Local variable used to refer to alert text field in any scope
@@ -147,7 +147,7 @@ class TodoListTableViewController: UITableViewController {
     
     
     
-    //MARK - Model Manipulation Methods
+    //MARK: - Model Manipulation Methods
     
     /*
         Write data to Context and write to Core Data
@@ -219,7 +219,7 @@ class TodoListTableViewController: UITableViewController {
     
 }
 
-//MARK - SearchBar delegate functions
+//MARK: - SearchBar delegate functions
 extension TodoListTableViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
