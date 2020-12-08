@@ -77,7 +77,7 @@ class CategoryTableViewController: UITableViewController {
             }
         }
         catch {
-            print("Error saving context, \(error)")
+            print("Error saving category, \(error)")
         }
         
         tableView.reloadData()

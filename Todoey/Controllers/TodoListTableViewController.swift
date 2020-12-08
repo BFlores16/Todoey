@@ -6,30 +6,27 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class TodoListTableViewController: UITableViewController {
     
-    var itemArray = [Item]()
+    let realm = try! Realm()
+    var toDoItems : Results<Item>?
     var selectedCategory : Category? {
         // Anything between will happen as soon as selectedCategory gets set
         // with a value
         didSet {
-            //loadItems()
+            loadItems()
         }
     }
     
     @IBOutlet weak var searchBar: UISearchBar!
-    
     
     // Used for NSUserDefault persistent storage
     let defaults = UserDefaults.standard
     
     // Creating a new user data location instead of NSUserDefault
     //let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
-    
-    // Goes into app delegate and grabs persistent container context
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +56,7 @@ class TodoListTableViewController: UITableViewController {
         Return the number of items in the table view.
      */
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        return toDoItems?.count ?? 1
     }
     
     /*
@@ -69,15 +66,20 @@ class TodoListTableViewController: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        let item = itemArray[indexPath.row]
-        
-        cell.textLabel?.text = item.title
-        
-        // Ternary operator ==>
-        // value = condition ? valueIfTrue : ValueIfFalse
-        // Set the cell accessory depending on whether the cell is in
-        // done or not done condition
-        cell.accessoryType = item.done == true ? .checkmark : .none
+        if let item = toDoItems?[indexPath.row] {
+            cell.textLabel?.text = item.title
+            
+            
+            // Ternary operator ==>
+            // value = condition ? valueIfTrue : ValueIfFalse
+            // Set the cell accessory depending on whether the cell is in
+            // done or not done condition
+            cell.accessoryType = item.done == true ? .checkmark : .none
+        }
+        else {
+            cell.textLabel?.text = "No Items Added"
+        }
+    
         
         return cell
     }
@@ -89,13 +91,23 @@ class TodoListTableViewController: UITableViewController {
      */
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        /*
-            Conditional checkmark when user selects a cell
-            Changes the bool condition from false to true or true to false
-         */
-        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
-        saveItems()
+        if let item = toDoItems?[indexPath.row] {
+            do {
+                try realm.write {
+                    /*
+                        Conditional checkmark when user selects a cell
+                        Changes the bool condition from false to true or true to false
+                     */
+                    item.done = !item.done
+                }
+            }
+            catch {
+                print("Error saving done status, \(error)")
+            }
+        }
+        
+        tableView.reloadData()
         
         // Unhighlight row after it is selected
         tableView.deselectRow(at: indexPath, animated: true)
@@ -118,20 +130,22 @@ class TodoListTableViewController: UITableViewController {
         }
         
         // Create an add button for the alert
-        let addAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            // Action once user clicks "Add Item"
+        let addAction = UIAlertAction(title: "Add Item", style: .default) { [self] (action) in
             
-            // This gets triggered after alert.addTextField closure
-            print("Second: \(textField.text ?? "")")
-            
-            /*let newItem = Item(context: self.context)
-            newItem.title = textField.text!
-            newItem.done = false
-            newItem.parentCategory = self.selectedCategory
-            self.itemArray.append(newItem)*/
-            
-            // Save item to Core Data
-            self.saveItems()
+            if let currentCategory = self.selectedCategory {
+                do {
+                    try self.realm.write {
+                        let newItem = Item()
+                        newItem.title = textField.text!
+                        currentCategory.items.append(newItem)
+                    }
+                }
+                catch {
+                    print("Error saving item, \(error)")
+                }
+            }
+                
+            tableView.reloadData()
         }
         
         /*
@@ -158,84 +172,16 @@ class TodoListTableViewController: UITableViewController {
     
     
     //MARK: - Model Manipulation Methods
-    
-    /*
-        Write data to Context and write to Core Data
-     */
-    func saveItems() {
-        
-        do {
-            try context.save()
-        }
-        catch {
-            print("Error saving context, \(error)")
-        }
-        
-        tableView.reloadData()
-        
-    }
-    
-    /*
-        Use NSCoder to encode item array data into plist file to retrieve from later
-     */
-    /*func saveItems() {
-        
-        //let encoder = PropertyListEncoder()
-        
-        do {
-            try context.save()
-            //let data = try encoder.encode(self.itemArray)
-            //try data.write(to: dataFilePath!)
-        }
-        catch {
-            print("Error saving context, \(error)")
-        }
-        
-        tableView.reloadData()
-        
-    }*/
-    
     /*
         Get data from Core Data and reload the table view
      */
     // Function input allows a default value of Item.fetchRequest()
-    /*func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), with predicate: NSPredicate? = nil) {
-        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+    func loadItems() {
         
-        if let additionalPredicate = predicate {
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
-        }
-        else {
-            request.predicate = categoryPredicate
-        }
-        
-        //let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, predicate])
-        
-        do {
-           itemArray = try context.fetch(request)
-        }
-        catch {
-            print("Error loading context \(error)")
-        }
+        toDoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         
         tableView.reloadData()
-    }*/
-    
-    /*
-        Use NSCoder to decode data from plist file and update to item array
-     */
-    /*func loadItems() {
-        if let data = try? Data(contentsOf: dataFilePath!) {
-            let decoder = PropertyListDecoder()
-            do {
-                itemArray = try decoder.decode([Item].self, from: data)
-            }
-            catch
-            {
-            print("Error decoding item array, \(error)")
-            }
-        }
-    }*/
+    }
     
 }
 
