@@ -6,9 +6,11 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryTableViewController: UITableViewController {
+    
+    let realm = try! Realm()
     
     var categoryArray = [Category]()
     
@@ -17,7 +19,7 @@ class CategoryTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadCategories()
+        //loadCategories()
     }
 
     // MARK: - Table view data source
@@ -68,12 +70,14 @@ class CategoryTableViewController: UITableViewController {
     //MARK: - Data Manipulation Functions
     
     /*
-        Write data to Context and write to Core Data
+        Write data to Realm
      */
-    func saveCategories() {
+    func save(category: Category) {
         
         do {
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
         }
         catch {
             print("Error saving context, \(error)")
@@ -85,7 +89,7 @@ class CategoryTableViewController: UITableViewController {
     /*
         Get data from Core Data and reload the table view
      */
-    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
+    /*func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
         
         do {
             categoryArray = try context.fetch(request)
@@ -95,7 +99,7 @@ class CategoryTableViewController: UITableViewController {
         }
         
         tableView.reloadData()
-    }
+    }*/
     
     //MARK: - Add Categories
 
@@ -112,12 +116,12 @@ class CategoryTableViewController: UITableViewController {
         
         // Create add action
         let addAction = UIAlertAction(title: "Add Category", style: .default) { (action) in
-            let newCategory = Category(context: self.context)
+            let newCategory = Category()
             newCategory.name = textField.text!
             self.categoryArray.append(newCategory)
             
-            // Save category to core data
-            self.saveCategories()
+            // Save category to Realm
+            self.save(category: newCategory)
         }
         
         alert.addTextField { (alertTextField) in

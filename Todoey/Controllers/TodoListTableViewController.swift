@@ -15,7 +15,7 @@ class TodoListTableViewController: UITableViewController {
         // Anything between will happen as soon as selectedCategory gets set
         // with a value
         didSet {
-            loadItems()
+            //loadItems()
         }
     }
     
@@ -37,7 +37,7 @@ class TodoListTableViewController: UITableViewController {
         // Change back button to white
         self.navigationController?.navigationBar.tintColor = UIColor.white
         
-        searchBar.delegate = self
+        //searchBar.delegate = self
 
         // Load the data from NSUserDefault
 //        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
@@ -124,11 +124,11 @@ class TodoListTableViewController: UITableViewController {
             // This gets triggered after alert.addTextField closure
             print("Second: \(textField.text ?? "")")
             
-            let newItem = Item(context: self.context)
+            /*let newItem = Item(context: self.context)
             newItem.title = textField.text!
             newItem.done = false
             newItem.parentCategory = self.selectedCategory
-            self.itemArray.append(newItem)
+            self.itemArray.append(newItem)*/
             
             // Save item to Core Data
             self.saveItems()
@@ -199,7 +199,7 @@ class TodoListTableViewController: UITableViewController {
         Get data from Core Data and reload the table view
      */
     // Function input allows a default value of Item.fetchRequest()
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), with predicate: NSPredicate? = nil) {
+    /*func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), with predicate: NSPredicate? = nil) {
         let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
         
         if let additionalPredicate = predicate {
@@ -219,7 +219,7 @@ class TodoListTableViewController: UITableViewController {
         }
         
         tableView.reloadData()
-    }
+    }*/
     
     /*
         Use NSCoder to decode data from plist file and update to item array
@@ -240,7 +240,7 @@ class TodoListTableViewController: UITableViewController {
 }
 
 //MARK: - SearchBar delegate functions
-extension TodoListTableViewController: UISearchBarDelegate {
+/*extension TodoListTableViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
@@ -270,5 +270,4 @@ extension TodoListTableViewController: UISearchBarDelegate {
             }
         }
     }
-    
-}
+}*/
