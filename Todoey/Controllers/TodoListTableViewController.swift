@@ -14,6 +14,7 @@ class TodoListTableViewController: UITableViewController {
     
     @IBOutlet weak var searchBar: UISearchBar!
     
+    
     // Used for NSUserDefault persistent storage
     let defaults = UserDefaults.standard
     
@@ -25,6 +26,9 @@ class TodoListTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Change back button to white
+        self.navigationController?.navigationBar.tintColor = UIColor.white
         
         searchBar.delegate = self
         
@@ -130,7 +134,7 @@ class TodoListTableViewController: UITableViewController {
          */
         alert.addTextField { (alertTextField) in
             // This is a local variable, we need to assign it to another variable to be able to access outside this scope
-            alertTextField.placeholder = "Create new item."
+            alertTextField.placeholder = "Create New Item."
             textField = alertTextField
             
             // Remember that this line will print empty because the addTextField closure completes before the "action" closure
@@ -195,7 +199,7 @@ class TodoListTableViewController: UITableViewController {
            itemArray = try context.fetch(request)
         }
         catch {
-            print("Error saving context \(error)")
+            print("Error loading context \(error)")
         }
         
         tableView.reloadData()
