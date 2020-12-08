@@ -11,9 +11,8 @@ import CoreData
 class CategoryTableViewController: UITableViewController {
     
     var categoryArray = [Category]()
-    var indexPath: Int = 0
     
-    // Goes into app delegate and grabs persistent container context
+    // Grab reference to context we will use to communicate with persistent container
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
@@ -34,9 +33,7 @@ class CategoryTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
         
-        let category = categoryArray[indexPath.row]
-        
-        cell.textLabel?.text = category.name
+        cell.textLabel?.text = categoryArray[indexPath.row].name
         
         return cell
     }
@@ -47,17 +44,23 @@ class CategoryTableViewController: UITableViewController {
         Actions performed when row is selected
      */
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // Unhighlight
-        tableView.deselectRow(at: indexPath, animated: true)
+
+        // Highlight and deselect
+        // Keep in mind that deselcting will unwrap nil later if you attempt
+        // to get indexPath
+        //tableView.deselectRow(at: indexPath, animated: true)
         
-        self.indexPath = indexPath.row
-        performSegue(withIdentifier: "goToItems", sender: nil)
+        performSegue(withIdentifier: "goToItems", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         if segue.identifier == "goToItems" {
             let vc = segue.destination as! TodoListTableViewController
-            //vc.itemArray = categoryArray[indexPath].
+            
+            if let indexPath = self.tableView.indexPathForSelectedRow {
+                vc.selectedCategory = categoryArray[indexPath.row]
+            }
             
         }
     }
