@@ -36,10 +36,27 @@ class TodoListTableViewController: SwipeTableViewController {
         tableView.separatorStyle = .none
         tableView.rowHeight = 80.0
         
-        // Change back button to white
-        self.navigationController?.navigationBar.tintColor = UIColor.white
-        
         searchBar.delegate = self
+    }
+    
+    // Change nav bar color here because it happens after viewDidLoad life cycle
+    override func viewWillAppear(_ animated: Bool) {
+        // Match the navigation bar color to category color
+        if let barColor = categoryCellColor {
+            
+            title = selectedCategory?.name
+            
+            guard let navBar = navigationController?.navigationBar else {fatalError("Navigation controller does not exist.")}
+            if let navBarColor = HexColor(barColor) {
+                view.backgroundColor = navBarColor
+                navBar.backgroundColor = navBarColor
+                navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+                searchBar.barTintColor = navBarColor
+                searchBar.searchTextField.backgroundColor = UIColor.white
+                navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(navBarColor, returnFlat: true)]
+                
+            }
+        }
     }
 
     // MARK: - Table view data source
