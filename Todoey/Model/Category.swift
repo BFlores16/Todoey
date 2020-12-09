@@ -9,6 +9,7 @@ import Foundation
 import RealmSwift
 
 class Category: Object {
+    // dynamic means changes are monitoring changes during runtime
     @objc dynamic var name : String = ""
     let items = List<Item>()
 }
