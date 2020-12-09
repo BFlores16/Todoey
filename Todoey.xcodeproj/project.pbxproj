@@ -17,6 +17,7 @@
 		A53EF158257F47FA00B0B33E /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53EF157257F47FA00B0B33E /* Item.swift */; };
 		A53EF15B257F480100B0B33E /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53EF15A257F480100B0B33E /* Category.swift */; };
 		A570FCF4257F13ED00FD4282 /* CategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A570FCF3257F13ED00FD4282 /* CategoryTableViewController.swift */; };
+		A5EABAB625804C820050C31E /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EABAB525804C820050C31E /* SwipeTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		A53EF157257F47FA00B0B33E /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		A53EF15A257F480100B0B33E /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		A570FCF3257F13ED00FD4282 /* CategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewController.swift; sourceTree = "<group>"; };
+		A5EABAB525804C820050C31E /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 			children = (
 				A52D053F257DA15000CB1899 /* TodoListTableViewController.swift */,
 				A570FCF3257F13ED00FD4282 /* CategoryTableViewController.swift */,
+				A5EABAB525804C820050C31E /* SwipeTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 				A52D0528257D9C3200CB1899 /* AppDelegate.swift in Sources */,
 				A52D052A257D9C3200CB1899 /* SceneDelegate.swift in Sources */,
 				A570FCF4257F13ED00FD4282 /* CategoryTableViewController.swift in Sources */,
+				A5EABAB625804C820050C31E /* SwipeTableViewController.swift in Sources */,
 				A53EF158257F47FA00B0B33E /* Item.swift in Sources */,
 				A52D0540257DA15000CB1899 /* TodoListTableViewController.swift in Sources */,
 				A53EF15B257F480100B0B33E /* Category.swift in Sources */,
