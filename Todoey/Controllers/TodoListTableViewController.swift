@@ -7,11 +7,13 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class TodoListTableViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     var toDoItems : Results<Item>?
+    var categoryCellColor: String?
     var selectedCategory : Category? {
         // Anything between will happen as soon as selectedCategory gets set
         // with a value
@@ -31,6 +33,7 @@ class TodoListTableViewController: SwipeTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.separatorStyle = .none
         tableView.rowHeight = 80.0
         
         // Change back button to white
@@ -58,6 +61,12 @@ class TodoListTableViewController: SwipeTableViewController {
         if let item = toDoItems?[indexPath.row] {
             cell.textLabel?.text = item.title
             
+            // Get the category cell color and use that color to create a gradient
+            // of cell colors for the items in the category
+            if let cellColor = HexColor(categoryCellColor ?? "A1D7FF")?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(toDoItems!.count)) {
+                cell.backgroundColor = cellColor
+                cell.textLabel?.textColor = ContrastColorOf(cellColor, returnFlat: true)
+            }
         
             // Ternary operator ==>
             // value = condition ? valueIfTrue : ValueIfFalse

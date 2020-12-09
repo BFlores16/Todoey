@@ -11,5 +11,6 @@ import RealmSwift
 class Category: Object {
     // dynamic means changes are monitoring changes during runtime
     @objc dynamic var name : String = ""
+    @objc dynamic var cellColor: String?
     let items = List<Item>()
 }
